@@ -1,164 +1,165 @@
-```mermaid
 classDiagram
     %% ===== MODELOS =====
     class Libro {
-        -String isbn
-        -String titulo
-        -String autor
-        -String categoria
-        -int cantidadTotal
-        -int cantidadDisponible
-        +estaDisponible() boolean
-        +reducirDisponibilidad() void
-        +aumentarDisponibilidad() void
+        -isbn : String
+        -titulo : String
+        -autor : String
+        -categoria : String
+        -cantidadTotal : int
+        -cantidadDisponible : int
+        +estaDisponible() : boolean
+        +reducirDisponibilidad() : void
+        +aumentarDisponibilidad() : void
     }
 
     class Socio {
-        -String id
-        -String nombre
-        -String documento
-        -String telefono
-        -String email
-        -double multaAcumulada
-        +tieneMultasPendientes() boolean
-        +acumularMulta(monto) void
-        +pagarMulta(monto) void
+        -id : String
+        -nombre : String
+        -documento : String
+        -telefono : String
+        -email : String
+        -multaAcumulada : double
+        +tieneMultasPendientes() : boolean
+        +acumularMulta(monto : double) : void
+        +pagarMulta(monto : double) : void
     }
 
     class Prestamo {
-        -String id
-        -Libro libro
-        -Socio socio
-        -Date fechaPrestamo
-        -Date fechaVencimiento
-        -Date fechaDevolucion
-        -double multaGenerada
-        -boolean devuelto
-        +estaVencido() boolean
-        +calcularMulta() double
-        +registrarDevolucion() void
+        -id : String
+        -libro : Libro
+        -socio : Socio
+        -fechaPrestamo : Date
+        -fechaVencimiento : Date
+        -fechaDevolucion : Date
+        -multaGenerada : double
+        -devuelto : boolean
+        +estaVencido() : boolean
+        +calcularMulta() : double
+        +registrarDevolucion() : void
     }
 
     %% ===== REPOSITORIOS =====
-    class Repository~T~ {
+    class Repository {
         <<interface>>
-        +agregar(item) void
-        +buscarPorId(id) T
-        +listar() T[]
-        +eliminar(id) void
+        +agregar(item) : void
+        +buscarPorId(id : String)
+        +listar()
+        +eliminar(id : String) : void
     }
 
     class LibroRepository {
-        -Libro[] libros
-        +buscarPorCriterio(criterio) Libro[]
+        -libros : Libro[]
+        +buscarPorCriterio(criterio : String)
     }
 
     class SocioRepository {
-        -Socio[] socios
+        -socios : Socio[]
     }
 
     class PrestamoRepository {
-        -Prestamo[] prestamos
-        +listarActivos() Prestamo[]
-        +listarPorSocio(socioId) Prestamo[]
+        -prestamos : Prestamo[]
+        +listarActivos()
+        +listarPorSocio(socioId : String)
     }
 
     %% ===== SERVICIOS =====
     class CatalogoService {
-        -LibroRepository libroRepository
-        +agregarLibro(libro) void
-        +eliminarLibro(isbn) void
-        +buscarLibro(criterio) Libro[]
+        -libroRepository : LibroRepository
+        +agregarLibro(libro : Libro) : void
+        +eliminarLibro(isbn : String) : void
+        +buscarLibro(criterio : String)
     }
 
     class SocioService {
-        -SocioRepository socioRepository
-        +registrarSocio(socio) void
-        +editarSocio(id, datos) void
-        +eliminarSocio(id) void
-        +tieneMultasPendientes(id) boolean
+        -socioRepository : SocioRepository
+        +registrarSocio(socio : Socio) : void
+        +editarSocio(id : String, datos) : void
+        +eliminarSocio(id : String) : void
+        +tieneMultasPendientes(id : String) : boolean
     }
 
     class PrestamoService {
-        -LibroRepository libroRepository
-        -SocioRepository socioRepository
-        -PrestamoRepository prestamoRepository
-        -PoliticaMulta politicaMulta
-        +realizarPrestamo(socio, libro) Prestamo
-        +registrarDevolucion(idPrestamo) void
-        +listarPrestamosActivos() Prestamo[]
-        +generarReporteMasPrestados() Libro[]
+        -libroRepository : LibroRepository
+        -socioRepository : SocioRepository
+        -prestamoRepository : PrestamoRepository
+        -politicaMulta : PoliticaMulta
+        +realizarPrestamo(socio : Socio, libro : Libro)
+        +registrarDevolucion(idPrestamo : String) : void
+        +listarPrestamosActivos()
+        +generarReporteMasPrestados()
     }
 
     class PoliticaMulta {
         <<interface>>
-        +calcular(diasAtraso) double
+        +calcular(diasAtraso : int) : double
     }
 
     class PoliticaMultaFija {
-        -double montoPorDia
-        +calcular(diasAtraso) double
+        -montoPorDia : double
+        +calcular(diasAtraso : int) : double
     }
 
     %% ===== UI =====
     class MenuCommand {
         <<interface>>
-        +descripcion String
-        +ejecutar() void
+        +descripcion : String
+        +ejecutar() : void
     }
 
     class RegistrarLibroCommand {
-        -CatalogoService catalogoService
-        -Prompts prompts
-        +ejecutar() void
+        -catalogoService : CatalogoService
+        -prompts : Prompts
+        +ejecutar() : void
     }
 
     class RealizarPrestamoCommand {
-        -PrestamoService prestamoService
-        -SocioRepository socioRepository
-        -LibroRepository libroRepository
-        -Prompts prompts
-        +ejecutar() void
+        -prestamoService : PrestamoService
+        -socioRepository : SocioRepository
+        -libroRepository : LibroRepository
+        -prompts : Prompts
+        +ejecutar() : void
     }
 
     class Menu {
-        -MenuCommand[] comandos
-        -Prompts prompts
-        +mostrar() void
-        +ejecutarOpcion(indice) void
-        +iniciar() void
+        -comandos : MenuCommand[]
+        -prompts : Prompts
+        +mostrar() : void
+        +ejecutarOpcion(indice : int) : void
+        +iniciar() : void
     }
 
     class Prompts {
-        +preguntar(texto) String
-        +cerrar() void
+        +preguntar(texto : String) : String
+        +cerrar() : void
     }
 
     %% ===== RELACIONES =====
-    LibroRepository ..|> Repository
-    SocioRepository ..|> Repository
-    PrestamoRepository ..|> Repository
+    Repository <|.. LibroRepository
+    Repository <|.. SocioRepository
+    Repository <|.. PrestamoRepository
+
+    PoliticaMulta <|.. PoliticaMultaFija
+
+    MenuCommand <|.. RegistrarLibroCommand
+    MenuCommand <|.. RealizarPrestamoCommand
 
     LibroRepository "1" o-- "*" Libro
     SocioRepository "1" o-- "*" Socio
     PrestamoRepository "1" o-- "*" Prestamo
-    Prestamo "*" --> "1" Libro
-    Prestamo "*" --> "1" Socio
+
+    Prestamo --> Libro
+    Prestamo --> Socio
 
     CatalogoService --> LibroRepository
     SocioService --> SocioRepository
+
     PrestamoService --> LibroRepository
     PrestamoService --> SocioRepository
     PrestamoService --> PrestamoRepository
     PrestamoService --> PoliticaMulta
 
-    PoliticaMultaFija ..|> PoliticaMulta
-
-    RegistrarLibroCommand ..|> MenuCommand
-    RealizarPrestamoCommand ..|> MenuCommand
     RegistrarLibroCommand --> CatalogoService
     RealizarPrestamoCommand --> PrestamoService
 
     Menu "1" o-- "*" MenuCommand
     Menu --> Prompts
-```
